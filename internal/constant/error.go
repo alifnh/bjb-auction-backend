@@ -24,4 +24,5 @@ const (
 	FailedToExchangeToken         = "failed to exchange token"
 	FailedToGetUserInfo           = "failed to get user info"
 	FailedToDecodeUserInfo        = "failed to decode user info"
+	RoleNotPermitted              = "role not permitted"
 )

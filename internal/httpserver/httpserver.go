@@ -16,7 +16,12 @@ import (
 	"github.com/alifnh/bjb-auction-backend/internal/handler/httphandler"
 	"github.com/alifnh/bjb-auction-backend/internal/httpserver/middleware"
 	"github.com/alifnh/bjb-auction-backend/internal/pkg/database"
+	"github.com/alifnh/bjb-auction-backend/internal/pkg/encryptutils"
+	"github.com/alifnh/bjb-auction-backend/internal/pkg/jwtutils"
 	"github.com/alifnh/bjb-auction-backend/internal/pkg/logger"
+	"github.com/alifnh/bjb-auction-backend/internal/pkg/randutils"
+	"github.com/alifnh/bjb-auction-backend/internal/repository"
+	"github.com/alifnh/bjb-auction-backend/internal/usecase"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -25,22 +30,29 @@ import (
 )
 
 func initServer(cfg *config.Config) *http.Server {
-	_, err := database.InitDB(cfg)
+	db, err := database.InitDB(cfg)
 	if err != nil {
 		logger.Log.Fatal("error initializing database: ", err.Error())
 	}
 
 	// database
-	// postgresWrapper := database.NewPostgresWrapper(db)
-	// transactor := database.NewTransactor(db)
+	postgresWrapper := database.NewPostgresWrapper(db)
+	transactor := database.NewTransactor(db)
 
 	// utils
-	// jwtUtil := jwtutils.NewJwtUtil(cfg.Jwt)
-	// passwordEncryptor := encryptutils.NewBcryptPasswordEncryptor(cfg.App.BCryptCost)
-	// randutil := randutils.NewStdLibRandomUtil()
+	jwtUtil := jwtutils.NewJwtUtil(cfg.Jwt)
+	passwordEncryptor := encryptutils.NewBcryptPasswordEncryptor(cfg.App.BCryptCost)
+	randutil := randutils.NewStdLibRandomUtil()
+
+	// repositories
+	authRepository := repository.NewAuthRepository(postgresWrapper)
+
+	// usecases
+	authUsecase := usecase.NewAuthUsecase(authRepository, transactor, passwordEncryptor, jwtUtil, cfg, randutil)
 
 	// handlers
 	appHandler := httphandler.NewAppHandler()
+	authHandler := httphandler.NewAuthHandler(authUsecase)
 
 	// to remove the Gin's warning
 	gin.SetMode(gin.ReleaseMode)
@@ -49,6 +61,10 @@ func initServer(cfg *config.Config) *http.Server {
 	r.ContextWithFallback = true // enables .Done(), .Err(), and .Value()
 
 	registerValidators()
+
+	// init middlewares
+	// authMiddleware := middleware.NewAuthMiddleware(jwtUtil)
+	// authzMiddleware := middleware.NewAuthorizationMiddleware()
 
 	corsConfig := cors.Config{
 		AllowOrigins:     []string{"*"},
@@ -61,6 +77,7 @@ func initServer(cfg *config.Config) *http.Server {
 	// registering middlewares
 	middlewares := []gin.HandlerFunc{
 		middleware.ErrorHandler(),
+		middleware.Logger(),
 		gin.Recovery(),
 		cors.New(corsConfig),
 	}
@@ -71,6 +88,8 @@ func initServer(cfg *config.Config) *http.Server {
 	r.GET("/", appHandler.Index)
 
 	fmt.Println("in")
+	r.POST("/auth/register", authHandler.Register)
+	r.POST("/auth/login", authHandler.Login)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf("%s:%d", cfg.HttpServer.Host, cfg.HttpServer.Port),

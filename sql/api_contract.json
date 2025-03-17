@@ -1,3 +1,4 @@
+aa
 // Get All Assets ---------- Alif
 // url = ./assets?category=all&limit=2
 response = {
@@ -72,8 +73,8 @@ response = {
         "category": "img_url",
         "address": "img_url",
         "is_favorite": true,
-        "start_date": "2022-01-01T00:00:00.000Z",
-        "end_date": "2022-01-01T00:00:00.000Z",
+        "start_date": "2022-01-30",
+        "end_date": "2022-01-31",
         "created_at": "2022-01-01T00:00:00.000Z",
         "updated_at": "2022-01-01T00:00:00.000Z",
         "deleted_at": "2022-01-01T00:00:00.000Z"
@@ -88,8 +89,8 @@ request(Dalam bentuk formdata) = {
     "description": "description",
     "price": 100,
     "name": "name",
-    "start_date": "2022-01-01T00:00:00.000Z",
-    "end_date": "2022-01-01T00:00:00.000Z",
+    "start_date": "2022-01-30",
+    "end_date": "2022-01-31",
     "category": "category",
     "city": "city",
     "address": "address",
@@ -122,8 +123,8 @@ request(Dalam bentuk formdata) = {
     "description": "description",
     "price": 100,
     "name": "name",
-    "start_date": "2022-01-01T00:00:00.000Z",
-    "end_date": "2022-01-01T00:00:00.000Z",
+    "start_date": "2022-01-30",
+    "end_date": "2022-01-31",
     "category": "category",
     "city": "city",
     "address": "address",
@@ -182,8 +183,8 @@ response = {
     }
 }
 
-// Create User ---------------- Alif
-// url = ./users
+// Register ---------------- Alif
+// url = /auth/register
 // method = POST
 request = {
     "name": "name",
@@ -195,6 +196,24 @@ request = {
     "gender": "male",
     "city": "bandung",
 }
+response = {
+    "message": "user registered successfully"
+}
+
+// Login ---------------- Alif
+// url = /auth/login
+// method = POST
+request = {
+    "email": "email",
+    "password": "password",
+}
+response = {
+    "message": "user logged in successfully",
+    "data": {
+        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoidXNlciIsImlzcyI6InRoZS1pc3N1ZXIiLCJleHAiOjE3NDIzMDgzOTIsImlhdCI6MTc0MjIyMTk5Mn0.xGCva-R-scOV1tcxvqFa7HXHFnx2Evk2L_crU_ICYcY"
+    }
+}
+
 
 // Update Profile ---------------- Khoi
 // url = ./users

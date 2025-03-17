@@ -14,4 +14,5 @@ const (
 	ResponseMsgSuccessLogin          = "user logged in successfully"
 	ResponseMsgSuccessForgotPassword = "if email exist, a reset password link will be sent"
 	ResponseMsgSuccessResetPassword  = "reset password sucessfully"
+	MessageResponseSuccess           = "success"
 )
