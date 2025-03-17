@@ -1,0 +1,210 @@
+// Get All Assets ---------- Alif
+// url = ./assets?category=all&limit=2
+response = {
+    "message": "success get all assets",
+    "data": [
+        {
+            "id": 1,
+            "name": "name",
+            "price": 100,
+            "img_url": "img_url",
+            "city": "img_url",
+            "category": "img_url",
+            "created_at": "2022-01-01T00:00:00.000Z",
+            "updated_at": "2022-01-01T00:00:00.000Z",
+            "deleted_at": "2022-01-01T00:00:00.000Z"
+        },
+        {
+            "id": 1,
+            "name": "name",
+            "price": 100,
+            "img_url": "img_url",
+            "city": "img_url",
+            "category": "img_url",
+            "created_at": "2022-01-01T00:00:00.000Z",
+            "updated_at": "2022-01-01T00:00:00.000Z",
+            "deleted_at": "2022-01-01T00:00:00.000Z"
+        }
+    ]
+}
+
+// Get Favorite Assets ---------- Alif
+// url = ./assets/favorites
+response = {
+    "message": "success get favorite assets",
+    "data": [
+        {
+            "id": 1,
+            "name": "name",
+            "price": 100,
+            "img_url": "img_url",
+            "city": "img_url",
+            "category": "img_url",
+            "created_at": "2022-01-01T00:00:00.000Z",
+            "updated_at": "2022-01-01T00:00:00.000Z",
+            "deleted_at": "2022-01-01T00:00:00.000Z"
+        },
+        {
+            "id": 1,
+            "name": "name",
+            "price": 100,
+            "img_url": "img_url",
+            "city": "img_url",
+            "category": "img_url",
+            "created_at": "2022-01-01T00:00:00.000Z",
+            "updated_at": "2022-01-01T00:00:00.000Z",
+            "deleted_at": "2022-01-01T00:00:00.000Z"
+        }
+    ]
+}
+
+
+// Get Asset By Id ---------------- Khoi
+// url = ./assets/${id}
+response = {
+    "message": "success get asset by id",
+    "data": {
+        "id": 1,
+        "name": "name",
+        "price": 100,
+        "img_url": "img_url",
+        "city": "img_url",
+        "category": "img_url",
+        "address": "img_url",
+        "is_favorite": true,
+        "start_date": "2022-01-01T00:00:00.000Z",
+        "end_date": "2022-01-01T00:00:00.000Z",
+        "created_at": "2022-01-01T00:00:00.000Z",
+        "updated_at": "2022-01-01T00:00:00.000Z",
+        "deleted_at": "2022-01-01T00:00:00.000Z"
+    }
+}
+
+// Create Asset ----------------- Alif
+// url = ./assets
+// method = POST
+request(Dalam bentuk formdata) = {
+    "name": "name",
+    "description": "description",
+    "price": 100,
+    "name": "name",
+    "start_date": "2022-01-01T00:00:00.000Z",
+    "end_date": "2022-01-01T00:00:00.000Z",
+    "category": "category",
+    "city": "city",
+    "address": "address",
+    "image": file
+}
+response = {
+    "message": "success create asset",
+    "data": {
+        "id": 1,
+        "name": "name",
+        "price": 100,
+        "img_url": "img_url",
+        "city": "img_url",
+        "category": "img_url",
+        "address": "img_url",
+        "is_favorite": true,
+        "start_date": "2022-01-01T00:00:00.000Z",
+        "end_date": "2022-01-01T00:00:00.000Z",
+        "created_at": "2022-01-01T00:00:00.000Z",
+        "updated_at": "2022-01-01T00:00:00.000Z",
+        "deleted_at": "2022-01-01T00:00:00.000Z"
+    }
+}
+
+//Update Asset --------------------- Alif
+// url = ./assets/${id}
+// method = PUT
+request(Dalam bentuk formdata) = {
+    "name": "name",
+    "description": "description",
+    "price": 100,
+    "name": "name",
+    "start_date": "2022-01-01T00:00:00.000Z",
+    "end_date": "2022-01-01T00:00:00.000Z",
+    "category": "category",
+    "city": "city",
+    "address": "address",
+    "image": file
+}
+response = {
+    "message": "success update asset",
+    "data": {
+        "id": 1,
+        "name": "name",
+        "description": "description",
+        "price": 100,
+        "quantity": 10,
+        "created_at": "2022-01-01T00:00:00.000Z",
+        "updated_at": "2022-01-01T00:00:00.000Z",
+        "deleted_at": "2022-01-01T00:00:00.000Z"
+    }
+}
+
+//Delete Asset --------------------------- Khoi
+// url = ./assets/${id}
+// method = DELETE
+response = {
+    "message": "success delete asset",
+}
+
+// Add asset to favorite ----------------- Khoi
+// url = ./assets/${id}/add-favorite
+// method = POST
+response = {
+    "message": "success add asset to favorite",
+}
+
+// Remove asset from favorite ----------------- Khoi
+// url = ./assets/${id}/remove-favorite
+// method = DELETE
+response = {
+    "message": "success remove asset from favorite",
+}
+
+
+// -----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// Get Profile ---------------- Khoi
+// url = ./users
+response = {
+    "message": "success get profile",
+    "data": {
+        "id": 1,
+        "name": "name",
+        "email": "email",
+        "phone_number": "phone_number",
+        "created_at": "2022-01-01T00:00:00.000Z",
+        "updated_at": "2022-01-01T00:00:00.000Z",
+        "deleted_at": "2022-01-01T00:00:00.000Z"
+    }
+}
+
+// Create User ---------------- Alif
+// url = ./users
+// method = POST
+request = {
+    "name": "name",
+    "email": "email",
+    "phone_number": "phone_number",
+    "password": "password",
+    "nik": 123123123,
+    "date_of_birth": "2000-01-01",
+    "gender": "male",
+    "city": "bandung",
+}
+
+// Update Profile ---------------- Khoi
+// url = ./users
+// method = PUT
+request = {
+    "name": "name",
+    "email": "email",
+    "phone_number": "phone_number",
+    "nik": 123123123,
+    "date_of_birth": "2000-01-01",
+    "gender": "male",
+    "city": "bandung",
+}
