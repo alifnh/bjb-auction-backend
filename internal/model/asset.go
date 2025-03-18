@@ -1,6 +1,8 @@
 package model
 
+
 import "time"
+
 
 type Asset struct {
 	ID          int64

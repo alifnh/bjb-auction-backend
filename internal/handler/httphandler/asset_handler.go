@@ -2,6 +2,8 @@ package httphandler
 
 import (
 	"net/http"
+	"strconv"
+
 	"os"
 
 	"github.com/alifnh/bjb-auction-backend/internal/constant"
@@ -16,6 +18,27 @@ type AssetHandler struct {
 	assetUsecase usecase.AssetUsecase
 }
 
+func NewAssetHandler(assetUsecase usecase.AssetUsecase) *AssetHandler {
+	return &AssetHandler{assetUsecase: assetUsecase}
+}
+
+// Get Asset by ID
+func (h *AssetHandler) GetAssetByID(c *gin.Context) {
+	idParam := c.Param("id")
+
+	id, err := strconv.ParseInt(idParam, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid asset ID"})
+		return
+	}
+
+	asset, err := h.assetUsecase.GetAssetByID(c.Request.Context(), id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, asset)
 func NewAssetHandler(u usecase.AssetUsecase) *AssetHandler {
 	return &AssetHandler{
 		assetUsecase: u,
@@ -30,7 +53,7 @@ func (h *AssetHandler) CreateAsset(ctx *gin.Context) {
 		return
 	}
 
-	file, err := ctx.FormFile("image_file")
+	file, err := ctx.FormFile("img_file")
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file upload"})
 		return
@@ -55,7 +78,6 @@ func (h *AssetHandler) CreateAsset(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	response := dto.EntityToGetAssetResponse(asset)
 
-	ginutils.ResponseSuccessJSON(ctx, http.StatusCreated, constant.ResponseMsgSuccessRegister, response)
+	ginutils.ResponseSuccessJSON(ctx, http.StatusCreated, constant.ResponseMsgSuccessRegister, asset)
 }

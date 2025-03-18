@@ -40,6 +40,7 @@ CREATE TABLE assets (
     created_at timestamp NOT NULL default current_timestamp,
     deleted_at timestamp,
     updated_at timestamp NOT NULL default current_timestamp
+
 );
 
 CREATE TABLE users_assets (

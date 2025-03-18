@@ -94,6 +94,7 @@ func initServer(cfg *config.Config) *http.Server {
 	fmt.Println("in")
 	r.POST("/auth/register", authHandler.Register)
 	r.POST("/auth/login", authHandler.Login)
+	r.GET("/assets/:id", assetHandler.GetAssetByID)
 
 	ar := r.Group("")
 	ar.Use(authMiddleware.RequireToken())
