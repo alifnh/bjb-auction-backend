@@ -31,10 +31,10 @@ CREATE TABLE assets (
     img_url varchar(100) NOT NULL,
     name varchar(50) NOT NULL,
     price double precision,
-    description varchar(200),
+    description varchar(500),
     city varchar(100) NOT NULL,
-    address varchar(100) NOT NULL,
-    maps_url varchar(100),
+    address varchar(500) NOT NULL,
+    maps_url varchar(500),
     start_date Date NOT NULL,
     end_date Date NOT NULL,
     created_at timestamp NOT NULL default current_timestamp,
@@ -53,6 +53,3 @@ CREATE TABLE users_assets (
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (asset_id) REFERENCES assets(id)
 );
-
-CREATE INDEX idx_users_assets_user_id ON users_assets(user_id);
-CREATE INDEX idx_users_assets_asset_id ON users_assets(asset_id);

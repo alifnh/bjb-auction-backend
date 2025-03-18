@@ -30,7 +30,7 @@ func (h *AssetHandler) CreateAsset(ctx *gin.Context) {
 		return
 	}
 
-	file, err := ctx.FormFile("img_file")
+	file, err := ctx.FormFile("image_file")
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file upload"})
 		return
@@ -55,6 +55,7 @@ func (h *AssetHandler) CreateAsset(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	response := dto.EntityToGetAssetResponse(asset)
 
-	ginutils.ResponseSuccessJSON(ctx, http.StatusCreated, constant.ResponseMsgSuccessRegister, asset)
+	ginutils.ResponseSuccessJSON(ctx, http.StatusCreated, constant.ResponseMsgSuccessRegister, response)
 }

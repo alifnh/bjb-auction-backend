@@ -18,5 +18,5 @@ const (
 )
 
 const (
-	CloudinaryFolderImageAsset = "image_asset"
+	CloudinaryFolderImageAsset = "image_assets"
 )
