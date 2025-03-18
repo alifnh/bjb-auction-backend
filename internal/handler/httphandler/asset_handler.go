@@ -55,7 +55,7 @@ func (h *AssetHandler) CreateAsset(ctx *gin.Context) {
 		return
 	}
 
-	file, err := ctx.FormFile("img_file")
+	file, err := ctx.FormFile("image_file")
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file upload"})
 		return
@@ -77,9 +77,27 @@ func (h *AssetHandler) CreateAsset(ctx *gin.Context) {
 	}
 	asset, err := h.assetUsecase.CreateAsset(ctx, &req, img)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.Error(err)
 		return
 	}
 
-	ginutils.ResponseSuccessJSON(ctx, http.StatusCreated, constant.ResponseMsgSuccessRegister, asset)
+	response := dto.EntityToGetAssetResponse(asset)
+
+	ginutils.ResponseSuccessJSON(ctx, http.StatusCreated, constant.ResponseMsgSuccessRegister, response)
+}
+
+func (h *AssetHandler) GetAllAssets(ctx *gin.Context) {
+	var req dto.GetAssetListRequest
+
+	if err := ctx.ShouldBind(&req); err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	assets, err := h.assetUsecase.GetAllAssets(ctx, req.Category, req.Limit)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, constant.ResponseMsgSuccessRegister, assets)
 }

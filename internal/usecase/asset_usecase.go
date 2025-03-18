@@ -14,6 +14,7 @@ import (
 type AssetUsecase interface {
 	CreateAsset(ctx context.Context, req *dto.CreateAssetRequest, img string) (*model.Asset, error)
 	GetAssetByID(ctx context.Context, id int64) (*model.Asset, bool, error)
+	GetAllAssets(ctx context.Context, category string, limit int) ([]*dto.SumAssetResponse, error)
 }
 
 type assetUsecase struct {
@@ -55,4 +56,14 @@ func (u *assetUsecase) GetAssetByID(ctx context.Context, id int64) (*model.Asset
 	}
 
 	return asset, isFavorite, nil
+}
+
+func (u *assetUsecase) GetAllAssets(ctx context.Context, category string, limit int) ([]*dto.SumAssetResponse, error) {
+	assets, err := u.assetRepository.GetAllAssets(ctx, category, limit)
+	if err != nil {
+		log.Printf("failed to get all assets: %v", err)
+		return nil, err
+	}
+	result := dto.ConvertAssetsToSumAssetResponses(assets)
+	return result, nil
 }
