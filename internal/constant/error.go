@@ -26,4 +26,5 @@ const (
 	FailedToDecodeUserInfo        = "failed to decode user info"
 	RoleNotPermitted              = "role not permitted"
 	FailedToGetAssetInfo          = "failed to get asset info"
+	FailedToCreateAsset           = "failed to create asset"
 )

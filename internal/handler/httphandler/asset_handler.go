@@ -46,13 +46,13 @@ func (h *AssetHandler) CreateAsset(ctx *gin.Context) {
 	var req dto.CreateAssetRequest
 
 	if err := ctx.ShouldBind(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.Error(err)
 		return
 	}
 
 	file, err := ctx.FormFile("image_file")
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file upload"})
+		ctx.Error(err)
 		return
 	}
 	err = ctx.SaveUploadedFile(file, file.Filename)
@@ -78,7 +78,7 @@ func (h *AssetHandler) CreateAsset(ctx *gin.Context) {
 
 	response := dto.EntityToGetAssetResponse(asset)
 
-	ginutils.ResponseSuccessJSON(ctx, http.StatusCreated, constant.ResponseMsgSuccessRegister, response)
+	ginutils.ResponseSuccessJSON(ctx, http.StatusCreated, "Asset created successfully", response)
 }
 
 func (h *AssetHandler) GetAllAssets(ctx *gin.Context) {
@@ -94,7 +94,7 @@ func (h *AssetHandler) GetAllAssets(ctx *gin.Context) {
 		ctx.Error(err)
 		return
 	}
-	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, constant.ResponseMsgSuccessRegister, assets)
+	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, "success get all assets", assets)
 }
 
 func (h *AssetHandler) GetAllFavoriteAssets(ctx *gin.Context) {
@@ -110,7 +110,7 @@ func (h *AssetHandler) GetAllFavoriteAssets(ctx *gin.Context) {
 		ctx.Error(err)
 		return
 	}
-	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, constant.ResponseMsgSuccessRegister, assets)
+	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, "success get all favorite assets", assets)
 }
 
 func (h *AssetHandler) DeleteAssetByID(ctx *gin.Context) {
@@ -128,4 +128,26 @@ func (h *AssetHandler) DeleteAssetByID(ctx *gin.Context) {
 		return
 	}
 	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, "Success delete asset", nil)
+}
+
+func (h *AssetHandler) UpdateAsset(ctx *gin.Context) {
+	var req dto.UpdateAssetRequest
+	assetIDParam := ctx.Param("id")
+	assetID, err := strconv.ParseInt(assetIDParam, 10, 64)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	if err := ctx.ShouldBind(&req); err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	err = h.assetUsecase.UpdateAsset(ctx, &req, assetID)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, "success update assets", req)
 }

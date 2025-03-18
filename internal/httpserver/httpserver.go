@@ -110,6 +110,7 @@ func initServer(cfg *config.Config) *http.Server {
 		ar.GET("/users", authHandler.GetProfileByID)
 		ar.PUT("/users", authHandler.UpdateProfile)
 		ar.GET("/assets/favorites", assetHandler.GetAllFavoriteAssets)
+		ar.PUT("/assets/:id", authzMiddleware.RequireRole(constant.RoleAdmin), assetHandler.UpdateAsset)
 	}
 
 	srv := &http.Server{

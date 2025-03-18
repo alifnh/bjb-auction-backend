@@ -17,6 +17,7 @@ type AssetUsecase interface {
 	GetAllAssets(ctx context.Context, category string, limit int) ([]*dto.SumAssetResponse, error)
 	GetAllFavoriteAssets(ctx context.Context, category string, limit int) ([]*dto.SumAssetResponse, error)
 	DeleteAssetByID(ctx context.Context, assetID int64) error
+	UpdateAsset(ctx context.Context, req *dto.UpdateAssetRequest, assetId int64) error
 }
 
 type assetUsecase struct {
@@ -35,7 +36,7 @@ func (u *assetUsecase) CreateAsset(ctx context.Context, req *dto.CreateAssetRequ
 
 	asset, err := dto.CreateAssetReqToEntity(req, img)
 	if err != nil {
-		return nil, err
+		return nil, apperror.ErrFailedToCreateAsset
 	}
 	return u.assetRepository.CreateAsset(ctx, asset)
 }
@@ -83,6 +84,19 @@ func (u *assetUsecase) GetAllFavoriteAssets(ctx context.Context, category string
 
 func (u *assetUsecase) DeleteAssetByID(ctx context.Context, assetID int64) error {
 	err := u.assetRepository.DeleteAssetById(ctx, assetID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *assetUsecase) UpdateAsset(ctx context.Context, req *dto.UpdateAssetRequest, assetId int64) error {
+	asset, err := dto.UpdateAssetReqToEntity(req)
+	asset.ID = assetId
+	if err != nil {
+		return err
+	}
+	err = u.assetRepository.UpdateAsset(ctx, asset)
 	if err != nil {
 		return err
 	}
