@@ -2,40 +2,34 @@ package usecase
 
 import (
 	"context"
-	"log"
 
-	"github.com/alifnh/bjb-auction-backend/internal/config"
+	"github.com/alifnh/bjb-auction-backend/internal/dto"
 	"github.com/alifnh/bjb-auction-backend/internal/model"
-	"github.com/alifnh/bjb-auction-backend/internal/pkg/apperror"
-	"github.com/alifnh/bjb-auction-backend/internal/pkg/database"
-	"github.com/alifnh/bjb-auction-backend/internal/pkg/encryptutils"
-	"github.com/alifnh/bjb-auction-backend/internal/pkg/jwtutils"
-	"github.com/alifnh/bjb-auction-backend/internal/pkg/randutils"
 	"github.com/alifnh/bjb-auction-backend/internal/repository"
 )
 
 type AssetUsecase interface {
+	CreateAsset(ctx context.Context, req *dto.CreateAssetRequest, img string) (*model.Asset, error)
 	GetAssetByID(ctx context.Context, id int64) (*model.Asset, error)
 }
 
 type assetUsecase struct {
-	assetRepository   repository.AssetRepository
-	transactor        database.Transactor
-	passwordEncryptor encryptutils.PasswordEncryptor
-	jwtUtil           jwtutils.JwtUtil
-	config            *config.Config
-	randutils         randutils.RandomUtil
+	assetRepository repository.AssetRepository
 }
 
-func NewAssetUsecase(ur repository.AssetRepository, transactor database.Transactor, passwordEncryptor encryptutils.PasswordEncryptor, jwtUtil jwtutils.JwtUtil, cfg *config.Config, randutils randutils.RandomUtil) *assetUsecase {
+func NewAssetUsecase(ar repository.AssetRepository) *assetUsecase {
 	return &assetUsecase{
-		assetRepository:   ur,
-		transactor:        transactor,
-		passwordEncryptor: passwordEncryptor,
-		jwtUtil:           jwtUtil,
-		config:            cfg,
-		randutils:         randutils,
+		assetRepository: ar,
 	}
+}
+
+func (u *assetUsecase) CreateAsset(ctx context.Context, req *dto.CreateAssetRequest, img string) (*model.Asset, error) {
+
+	asset, err := dto.CreateAssetReqToEntity(req, img)
+	if err != nil {
+		return nil, err
+	}
+	return u.assetRepository.CreateAsset(ctx, asset)
 }
 
 func (u *assetUsecase) GetAssetByID(ctx context.Context, id int64) (*model.Asset, error) {

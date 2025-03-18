@@ -16,3 +16,7 @@ const (
 	ResponseMsgSuccessResetPassword  = "reset password sucessfully"
 	MessageResponseSuccess           = "success"
 )
+
+const (
+	CloudinaryFolderImageAsset = "image_assets"
+)

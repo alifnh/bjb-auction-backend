@@ -1,8 +1,8 @@
 package model
 
-import (
-	"time"
-)
+
+import "time"
+
 
 type Asset struct {
 	ID          int64

@@ -94,7 +94,7 @@ request(Dalam bentuk formdata) = {
     "category": "category",
     "city": "city",
     "address": "address",
-    "image": file
+    "image_file": file
 }
 response = {
     "message": "success create asset",
