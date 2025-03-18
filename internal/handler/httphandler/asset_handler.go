@@ -29,14 +29,14 @@ func (h *AssetHandler) GetAssetByID(ctx *gin.Context) {
 	assetIDParam := ctx.Param("id")
 	assetID, err := strconv.ParseInt(assetIDParam, 10, 64)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid asset ID"})
+		ctx.Error(err)
 		return
 	}
 
 	// Ambil asset dan status favorite dari usecase
 	asset, isFavorite, err := h.assetUsecase.GetAssetByID(ctx.Request.Context(), assetID)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		ctx.Error(err)
 		return
 	}
 
