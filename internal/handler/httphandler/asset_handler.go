@@ -23,22 +23,28 @@ func NewAssetHandler(assetUsecase usecase.AssetUsecase) *AssetHandler {
 }
 
 // Get Asset by ID
-func (h *AssetHandler) GetAssetByID(c *gin.Context) {
-	idParam := c.Param("id")
+func (h *AssetHandler) GetAssetByID(ctx *gin.Context) {
 
-	id, err := strconv.ParseInt(idParam, 10, 64)
+	// Ambil assetID dari parameter URL
+	assetIDParam := ctx.Param("id")
+	assetID, err := strconv.ParseInt(assetIDParam, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid asset ID"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid asset ID"})
 		return
 	}
 
-	asset, err := h.assetUsecase.GetAssetByID(c.Request.Context(), id)
+	// Ambil asset dan status favorite dari usecase
+	asset, isFavorite, err := h.assetUsecase.GetAssetByID(ctx.Request.Context(), assetID)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, asset)
+	// Gunakan fungsi yang telah diperbarui untuk mengonversi asset ke response
+	response := dto.AssetEntityToResponse(asset, isFavorite)
+
+	// Kirim response ke client
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (h *AssetHandler) CreateAsset(ctx *gin.Context) {

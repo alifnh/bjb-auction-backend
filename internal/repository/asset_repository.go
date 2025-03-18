@@ -29,12 +29,13 @@ func (r *assetRepository) GetAssetById(ctx context.Context, id int64) (*model.As
 		FROM assets
 		WHERE id = $1
 	`
+	log.Print(id)
 	var asset model.Asset
 	err := r.db.Start(ctx).QueryRowContext(ctx, q, id).Scan(&asset.ID, &asset.Category, &asset.ImgUrl, &asset.Name, &asset.Price,
 		&asset.Description, &asset.City, &asset.Address, &asset.MapsUrl,
 		&asset.StartDate, &asset.EndDate, &asset.CreatedAt, &asset.UpdatedAt, &asset.DeletedAt)
 	if err != nil {
-		log.Printf("failed to get user by id: %v", err)
+		log.Printf("failed to get assets by id: %v", err)
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
