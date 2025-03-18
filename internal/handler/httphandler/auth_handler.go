@@ -5,6 +5,7 @@ import (
 
 	"github.com/alifnh/bjb-auction-backend/internal/constant"
 	"github.com/alifnh/bjb-auction-backend/internal/dto"
+	"github.com/alifnh/bjb-auction-backend/internal/pkg/ctxutils"
 	"github.com/alifnh/bjb-auction-backend/internal/pkg/ginutils"
 	"github.com/alifnh/bjb-auction-backend/internal/usecase"
 	"github.com/gin-gonic/gin"
@@ -58,4 +59,23 @@ func (h *AuthHandler) Login(ctx *gin.Context) {
 	}
 
 	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, constant.ResponseMsgSuccessLogin, data)
+}
+
+func (h *AuthHandler) GetProfileByID(ctx *gin.Context) {
+	userIDInt, ok := ctxutils.GetUserId(ctx)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})
+		return
+	}
+
+	user, err := h.authUsecase.GetProfileByID(ctx.Request.Context(), userIDInt)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "success get profile",
+		"data":    user,
+	})
 }

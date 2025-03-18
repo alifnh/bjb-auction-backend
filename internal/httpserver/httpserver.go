@@ -107,6 +107,7 @@ func initServer(cfg *config.Config) *http.Server {
 		ar.POST("/assets/:id/add-favorite", userAssetHandler.AddFavorite)
 		ar.DELETE("/assets/:id/remove-favorite", userAssetHandler.RemoveFavorite)
 		ar.GET("/assets", assetHandler.GetAllAssets)
+		ar.GET("/users", authHandler.GetProfileByID)
 	}
 
 	srv := &http.Server{

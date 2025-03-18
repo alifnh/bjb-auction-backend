@@ -6,6 +6,7 @@ import (
 
 	"github.com/alifnh/bjb-auction-backend/internal/config"
 	"github.com/alifnh/bjb-auction-backend/internal/dto"
+	"github.com/alifnh/bjb-auction-backend/internal/model"
 	"github.com/alifnh/bjb-auction-backend/internal/pkg/apperror"
 	"github.com/alifnh/bjb-auction-backend/internal/pkg/database"
 	"github.com/alifnh/bjb-auction-backend/internal/pkg/encryptutils"
@@ -17,6 +18,7 @@ import (
 type AuthUsecase interface {
 	Register(ctx context.Context, req *dto.RegisterUserRequest) error
 	Login(ctx context.Context, req *dto.LoginUserRequest) (string, error)
+	GetProfileByID(ctx context.Context, userID int64) (*model.User, error)
 }
 
 type authUsecase struct {
@@ -91,4 +93,12 @@ func (u *authUsecase) Login(ctx context.Context, req *dto.LoginUserRequest) (str
 	}
 
 	return token, nil
+}
+
+func (u *authUsecase) GetProfileByID(ctx context.Context, userID int64) (*model.User, error) {
+	user, err := u.authRepository.GetUserByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
