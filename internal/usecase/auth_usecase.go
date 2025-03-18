@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/alifnh/bjb-auction-backend/internal/config"
@@ -19,6 +20,7 @@ type AuthUsecase interface {
 	Register(ctx context.Context, req *dto.RegisterUserRequest) error
 	Login(ctx context.Context, req *dto.LoginUserRequest) (string, error)
 	GetProfileByID(ctx context.Context, userID int64) (*model.User, error)
+	UpdateProfile(ctx context.Context, userID int64, req *dto.UpdateProfileRequest) (*dto.UserResponse, error)
 }
 
 type authUsecase struct {
@@ -96,9 +98,25 @@ func (u *authUsecase) Login(ctx context.Context, req *dto.LoginUserRequest) (str
 }
 
 func (u *authUsecase) GetProfileByID(ctx context.Context, userID int64) (*model.User, error) {
-	user, err := u.authRepository.GetUserByID(ctx, userID)
+	user, err := u.authRepository.GetById(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
+}
+
+func (u *authUsecase) UpdateProfile(ctx context.Context, userID int64, req *dto.UpdateProfileRequest) (*dto.UserResponse, error) {
+	err := u.authRepository.UpdateProfile(ctx, userID, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update profile: %w", err)
+	}
+
+	user, err := u.authRepository.GetById(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	userResponse := dto.EntityToUserResponse(user)
+
+	return userResponse, nil
 }

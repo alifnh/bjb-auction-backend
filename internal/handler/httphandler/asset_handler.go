@@ -38,8 +38,8 @@ func (h *AssetHandler) GetAssetByID(ctx *gin.Context) {
 		return
 	}
 	response := dto.AssetEntityToResponse(asset, isFavorite)
+	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, "Succesfully get asset by id", response)
 
-	ctx.JSON(http.StatusOK, response)
 }
 
 func (h *AssetHandler) CreateAsset(ctx *gin.Context) {
@@ -127,8 +127,7 @@ func (h *AssetHandler) DeleteAssetByID(ctx *gin.Context) {
 		ctx.Error(err)
 		return
 	}
-
-	ctx.JSON(http.StatusOK, gin.H{"message": "success delete asset"})
+	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, "Success delete asset", nil)
 }
 
 func (h *AssetHandler) UpdateAsset(ctx *gin.Context) {

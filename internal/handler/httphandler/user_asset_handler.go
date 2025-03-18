@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/alifnh/bjb-auction-backend/internal/pkg/ctxutils"
+	"github.com/alifnh/bjb-auction-backend/internal/pkg/ginutils"
 	"github.com/alifnh/bjb-auction-backend/internal/usecase"
 
 	"github.com/gin-gonic/gin"
@@ -19,11 +20,7 @@ func NewUserAssetHandler(userAssetUsecase usecase.UserAssetUsecase) *UserAssetHa
 }
 
 func (h *UserAssetHandler) AddFavorite(ctx *gin.Context) {
-	userID, ok := ctxutils.GetUserId(ctx)
-	if !ok {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})
-		return
-	}
+	userID, _ := ctxutils.GetUserId(ctx)
 
 	// Ambil assetID dari parameter URL
 	assetIDParam := ctx.Param("id")
@@ -41,15 +38,11 @@ func (h *UserAssetHandler) AddFavorite(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "success add asset to favorite"})
+	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, "success add asset to favorite", nil)
 }
 
 func (h *UserAssetHandler) RemoveFavorite(ctx *gin.Context) {
-	userID, ok := ctxutils.GetUserId(ctx)
-	if !ok {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})
-		return
-	}
+	userID, _ := ctxutils.GetUserId(ctx)
 
 	// Ambil assetID dari parameter URL
 	assetIDParam := ctx.Param("id")
@@ -65,6 +58,5 @@ func (h *UserAssetHandler) RemoveFavorite(ctx *gin.Context) {
 		ctx.Error(err)
 		return
 	}
-
-	ctx.JSON(http.StatusOK, gin.H{"message": "success remove asset from favorite"})
+	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, "success remove asset from favorite", nil)
 }
