@@ -46,13 +46,16 @@ func initServer(cfg *config.Config) *http.Server {
 
 	// repositories
 	authRepository := repository.NewAuthRepository(postgresWrapper)
+	assetRepository := repository.NewAssetRepository(postgresWrapper)
 
 	// usecases
 	authUsecase := usecase.NewAuthUsecase(authRepository, transactor, passwordEncryptor, jwtUtil, cfg, randutil)
+	assetUsecase := usecase.NewAssetUsecase(assetRepository, transactor, passwordEncryptor, jwtUtil, cfg, randutil)
 
 	// handlers
 	appHandler := httphandler.NewAppHandler()
 	authHandler := httphandler.NewAuthHandler(authUsecase)
+	assetHandler := httphandler.NewAssetHandler(assetUsecase)
 
 	// to remove the Gin's warning
 	gin.SetMode(gin.ReleaseMode)
@@ -90,6 +93,7 @@ func initServer(cfg *config.Config) *http.Server {
 	fmt.Println("in")
 	r.POST("/auth/register", authHandler.Register)
 	r.POST("/auth/login", authHandler.Login)
+	r.GET("/assets/:id", assetHandler.GetAssetByID)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf("%s:%d", cfg.HttpServer.Host, cfg.HttpServer.Port),

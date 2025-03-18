@@ -22,8 +22,8 @@ CREATE TABLE users (
     password varchar(255),
     phone_number varchar(13),
     role varchar(50) NOT NULL,
-    created_at timestamp NOT NULL,
-    updated_at timestamp NOT NULL,
+    created_at timestamp NOT NULL DEFAULT NOW(),
+    updated_at timestamp NOT NULL DEFAULT NOW(),
     deleted_at timestamp
 );
 
@@ -40,18 +40,18 @@ CREATE TABLE assets (
     maps_url varchar(100),
     start_date Date NOT NULL,
     end_date Date NOT NULL,
-    created_at timestamp NOT NULL,
+    created_at timestamp NOT NULL DEFAULT NOW(),
     deleted_at timestamp,
-    updated_at timestamp NOT NULL
+    updated_at timestamp NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE users_assets (
     id bigserial PRIMARY KEY,
     user_id bigint NOT NULL,
     asset_id bigint NOT NULL,
-    created_at timestamp NOT NULL,
+    created_at timestamp NOT NULL DEFAULT NOW(),
     deleted_at timestamp,
-    updated_at timestamp NOT NULL,
+    updated_at timestamp NOT NULL DEFAULT NOW(),
 
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (asset_id) REFERENCES assets(id)
