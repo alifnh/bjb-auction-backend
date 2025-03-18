@@ -51,6 +51,7 @@ CREATE TABLE users_assets (
     deleted_at timestamp,
     updated_at timestamp NOT NULL default current_timestamp,
 
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (asset_id) REFERENCES assets(id)
+    CONSTRAINT unique_user_asset UNIQUE (user_id, asset_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (asset_id) REFERENCES assets(id) ON DELETE CASCADE
 );

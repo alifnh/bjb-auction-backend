@@ -25,25 +25,20 @@ func NewAssetHandler(assetUsecase usecase.AssetUsecase) *AssetHandler {
 // Get Asset by ID
 func (h *AssetHandler) GetAssetByID(ctx *gin.Context) {
 
-	// Ambil assetID dari parameter URL
 	assetIDParam := ctx.Param("id")
 	assetID, err := strconv.ParseInt(assetIDParam, 10, 64)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid asset ID"})
+		ctx.Error(err)
 		return
 	}
 
-	// Ambil asset dan status favorite dari usecase
 	asset, isFavorite, err := h.assetUsecase.GetAssetByID(ctx.Request.Context(), assetID)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		ctx.Error(err)
 		return
 	}
-
-	// Gunakan fungsi yang telah diperbarui untuk mengonversi asset ke response
 	response := dto.AssetEntityToResponse(asset, isFavorite)
 
-	// Kirim response ke client
 	ctx.JSON(http.StatusOK, response)
 }
 
@@ -116,4 +111,22 @@ func (h *AssetHandler) GetAllFavoriteAssets(ctx *gin.Context) {
 		return
 	}
 	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, constant.ResponseMsgSuccessRegister, assets)
+}
+
+func (h *AssetHandler) DeleteAssetByID(ctx *gin.Context) {
+
+	assetIDParam := ctx.Param("id")
+	assetID, err := strconv.ParseInt(assetIDParam, 10, 64)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	err = h.assetUsecase.DeleteAssetByID(ctx.Request.Context(), assetID)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "success delete asset"})
 }
