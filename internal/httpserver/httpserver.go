@@ -48,15 +48,18 @@ func initServer(cfg *config.Config) *http.Server {
 	// repositories
 	authRepository := repository.NewAuthRepository(postgresWrapper)
 	assetRepository := repository.NewAssetRepository(postgresWrapper)
+	userAssetRepository := repository.NewUserAssetRepository(postgresWrapper)
 
 	// usecases
 	authUsecase := usecase.NewAuthUsecase(authRepository, transactor, passwordEncryptor, jwtUtil, cfg, randutil)
-	assetUsecase := usecase.NewAssetUsecase(assetRepository)
+	assetUsecase := usecase.NewAssetUsecase(assetRepository, userAssetRepository)
+	userAssetUsecase := usecase.NewUserAssetUsecase(userAssetRepository)
 
 	// handlers
 	appHandler := httphandler.NewAppHandler()
 	authHandler := httphandler.NewAuthHandler(authUsecase)
 	assetHandler := httphandler.NewAssetHandler(assetUsecase)
+	userAssetHandler := httphandler.NewUserAssetHandler(userAssetUsecase)
 
 	// to remove the Gin's warning
 	gin.SetMode(gin.ReleaseMode)
@@ -94,12 +97,15 @@ func initServer(cfg *config.Config) *http.Server {
 	fmt.Println("in")
 	r.POST("/auth/register", authHandler.Register)
 	r.POST("/auth/login", authHandler.Login)
-	r.GET("/assets/:id", assetHandler.GetAssetByID)
 
 	ar := r.Group("")
 	ar.Use(authMiddleware.RequireToken())
 	{
+		ar.GET("/assets/:id", assetHandler.GetAssetByID)
 		ar.POST("/assets", authzMiddleware.RequireRole(constant.RoleAdmin), assetHandler.CreateAsset)
+		ar.POST("/assets/:id/add-favorite", userAssetHandler.AddFavorite)
+		ar.DELETE("/assets/:id/remove-favorite", userAssetHandler.RemoveFavorite)
+
 		ar.GET("/assets", assetHandler.GetAllAssets)
 	}
 

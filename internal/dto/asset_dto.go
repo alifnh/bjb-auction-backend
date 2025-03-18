@@ -134,17 +134,18 @@ type AssetResponse struct {
 	ImgURL      string  `json:"img_url"`
 	Name        string  `json:"name"`
 	Price       float64 `json:"price"`
-	Description string  `json:"description"`
+	Description string  `json:"description,omitempty"`
 	City        string  `json:"city"`
 	Address     string  `json:"address"`
-	MapsURL     string  `json:"maps_url"`
+	MapsURL     string  `json:"maps_url,omitempty"`
 	StartDate   string  `json:"start_date"`
 	EndDate     string  `json:"end_date"`
 	CreatedAt   string  `json:"created_at"`
 	UpdatedAt   string  `json:"updated_at"`
+	IsFavorite  bool    `json:"is_favorite"`
 }
 
-func AssetEntityToResponse(asset *model.Asset) *AssetResponse {
+func AssetEntityToResponse(asset *model.Asset, isFavorite bool) *AssetResponse {
 	startDate, err := dateutils.TimestampToDate(asset.StartDate)
 	if err != nil {
 		return nil
@@ -161,20 +162,31 @@ func AssetEntityToResponse(asset *model.Asset) *AssetResponse {
 	if err != nil {
 		return nil
 	}
+
+	var MapsURL string
+	if asset.MapsUrl != nil {
+		MapsURL = *asset.MapsUrl
+	}
+	var Description string
+	if asset.Description != nil {
+		Description = *asset.Description
+	}
+
 	return &AssetResponse{
 		ID:          asset.ID,
 		Category:    asset.Category,
 		ImgURL:      asset.ImgUrl,
 		Name:        asset.Name,
 		Price:       asset.Price,
-		Description: *asset.Description,
+		Description: Description,
 		City:        asset.City,
 		Address:     asset.Address,
-		MapsURL:     *asset.MapsUrl,
+		MapsURL:     MapsURL,
 		StartDate:   startDate,
 		EndDate:     endDate,
 		CreatedAt:   createdAt,
 		UpdatedAt:   updatedAt,
+		IsFavorite:  isFavorite,
 	}
 }
 
