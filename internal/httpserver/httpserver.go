@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/alifnh/bjb-auction-backend/internal/config"
+	"github.com/alifnh/bjb-auction-backend/internal/constant"
 	"github.com/alifnh/bjb-auction-backend/internal/handler/httphandler"
 	"github.com/alifnh/bjb-auction-backend/internal/httpserver/middleware"
 	"github.com/alifnh/bjb-auction-backend/internal/pkg/database"
@@ -46,13 +47,16 @@ func initServer(cfg *config.Config) *http.Server {
 
 	// repositories
 	authRepository := repository.NewAuthRepository(postgresWrapper)
+	assetRepository := repository.NewAssetRepository(postgresWrapper)
 
 	// usecases
 	authUsecase := usecase.NewAuthUsecase(authRepository, transactor, passwordEncryptor, jwtUtil, cfg, randutil)
+	assetUsecase := usecase.NewAssetUsecase(assetRepository)
 
 	// handlers
 	appHandler := httphandler.NewAppHandler()
 	authHandler := httphandler.NewAuthHandler(authUsecase)
+	assetHandler := httphandler.NewAssetHandler(assetUsecase)
 
 	// to remove the Gin's warning
 	gin.SetMode(gin.ReleaseMode)
@@ -63,8 +67,8 @@ func initServer(cfg *config.Config) *http.Server {
 	registerValidators()
 
 	// init middlewares
-	// authMiddleware := middleware.NewAuthMiddleware(jwtUtil)
-	// authzMiddleware := middleware.NewAuthorizationMiddleware()
+	authMiddleware := middleware.NewAuthMiddleware(jwtUtil)
+	authzMiddleware := middleware.NewAuthorizationMiddleware()
 
 	corsConfig := cors.Config{
 		AllowOrigins:     []string{"*"},
@@ -90,6 +94,12 @@ func initServer(cfg *config.Config) *http.Server {
 	fmt.Println("in")
 	r.POST("/auth/register", authHandler.Register)
 	r.POST("/auth/login", authHandler.Login)
+
+	ar := r.Group("")
+	ar.Use(authMiddleware.RequireToken())
+	{
+		ar.POST("/assets", authzMiddleware.RequireRole(constant.RoleAdmin), assetHandler.CreateAsset)
+	}
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf("%s:%d", cfg.HttpServer.Host, cfg.HttpServer.Port),
