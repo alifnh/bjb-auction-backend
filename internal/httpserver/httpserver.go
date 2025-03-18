@@ -100,6 +100,7 @@ func initServer(cfg *config.Config) *http.Server {
 	ar.Use(authMiddleware.RequireToken())
 	{
 		ar.POST("/assets", authzMiddleware.RequireRole(constant.RoleAdmin), assetHandler.CreateAsset)
+		ar.GET("/assets", assetHandler.GetAllAssets)
 	}
 
 	srv := &http.Server{

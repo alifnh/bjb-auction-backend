@@ -177,3 +177,42 @@ func AssetEntityToResponse(asset *model.Asset) *AssetResponse {
 		UpdatedAt:   updatedAt,
 	}
 }
+
+type GetAssetListRequest struct {
+	Limit    int    `form:"limit" binding:"numeric,gte=0"`
+	Category string `form:"category"`
+}
+
+type SumAssetResponse struct {
+	Id        int64   `json:"id"`
+	Name      string  `json:"name"`
+	Price     float64 `json:"price"`
+	ImgUrl    string  `json:"img_url"`
+	City      string  `json:"city"`
+	Category  string  `json:"category"`
+	CreatedAt string  `json:"created_at"`
+	UpdatedAt string  `json:"updated_at"`
+}
+
+type GetAllAssetsResponse struct {
+	Data []*SumAssetResponse
+}
+
+func ConvertAssetsToSumAssetResponses(assets []*model.Asset) []*SumAssetResponse {
+	var response []*SumAssetResponse
+
+	for _, asset := range assets {
+		response = append(response, &SumAssetResponse{
+			Id:        asset.ID,
+			Name:      asset.Name,
+			Price:     asset.Price,
+			ImgUrl:    asset.ImgUrl,
+			City:      asset.City,
+			Category:  asset.Category,
+			CreatedAt: asset.CreatedAt.Format("2006-01-02 15:04:05"),
+			UpdatedAt: asset.UpdatedAt.Format("2006-01-02 15:04:05"),
+		})
+	}
+
+	return response
+}
