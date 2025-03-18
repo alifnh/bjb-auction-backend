@@ -121,7 +121,7 @@ func (r *assetRepository) GetAllAssetsFavorite(ctx context.Context, category str
 }
 
 func (r *assetRepository) DeleteAssetById(ctx context.Context, id int64) error {
-	query := `DELETE FROM assets WHERE id = $1`
+	query := `UPDATE assets SET deleted_at=NOW() WHERE id = $1`
 
 	res, err := r.db.Start(ctx).ExecContext(ctx, query, id)
 	if err != nil {

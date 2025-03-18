@@ -14,6 +14,7 @@ type AuthRepository interface {
 	GetUserByEmail(ctx context.Context, email string) (*model.User, error)
 	GetById(ctx context.Context, id int64) (*model.User, error)
 	UserExists(ctx context.Context, email string) (bool, error)
+	GetUserByID(ctx context.Context, userID int64) (*model.User, error)
 }
 
 type authRepository struct {
@@ -72,4 +73,25 @@ func (r *authRepository) UserExists(ctx context.Context, email string) (bool, er
 		return false, err
 	}
 	return exists, nil
+}
+
+func (r *authRepository) GetUserByID(ctx context.Context, userID int64) (*model.User, error) {
+	query := `
+		SELECT id, name, email, phone_number, created_at, updated_at, deleted_at
+		FROM users WHERE id = $1
+	`
+
+	var user model.User
+	err := r.db.Start(ctx).QueryRowContext(ctx, query, userID).Scan(
+		&user.ID, &user.Name, &user.Email, &user.PhoneNumber,
+		&user.CreatedAt, &user.UpdatedAt, &user.DeletedAt,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // Jika user tidak ditemukan, return nil tanpa error
+		}
+		return nil, err
+	}
+
+	return &user, nil
 }
