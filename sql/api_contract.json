@@ -106,7 +106,6 @@ response = {
         "city": "img_url",
         "category": "img_url",
         "address": "img_url",
-        "is_favorite": true,
         "start_date": "2022-01-01T00:00:00.000Z",
         "end_date": "2022-01-01T00:00:00.000Z",
         "created_at": "2022-01-01T00:00:00.000Z",
@@ -128,16 +127,21 @@ request(Dalam bentuk formdata) = {
     "category": "category",
     "city": "city",
     "address": "address",
-    "image": file
+    "image_file": file
 }
 response = {
     "message": "success update asset",
     "data": {
         "id": 1,
         "name": "name",
-        "description": "description",
         "price": 100,
-        "quantity": 10,
+        "img_url": "img_url",
+        "city": "img_url",
+        "category": "img_url",
+        "address": "img_url",
+        "is_favorite": true,
+        "start_date": "2022-01-30",
+        "end_date": "2022-01-31",
         "created_at": "2022-01-01T00:00:00.000Z",
         "updated_at": "2022-01-01T00:00:00.000Z",
         "deleted_at": "2022-01-01T00:00:00.000Z"
