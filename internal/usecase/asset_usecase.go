@@ -84,7 +84,6 @@ func (u *assetUsecase) GetAllFavoriteAssets(ctx context.Context, category string
 func (u *assetUsecase) DeleteAssetByID(ctx context.Context, assetID int64) error {
 	err := u.assetRepository.DeleteAssetById(ctx, assetID)
 	if err != nil {
-		log.Printf("failed to delete asset: %w", err)
 		return err
 	}
 	return nil
