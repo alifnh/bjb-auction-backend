@@ -55,3 +55,54 @@ func LoginReqToUserEntity(r *LoginUserRequest) *model.User {
 		Password: r.Password,
 	}
 }
+
+func EntityToUserResponse(user *model.User) *UserResponse {
+	DateOfBirth, err := dateutils.TimestampToDate(user.DateOfBirth)
+	if err != nil {
+		return nil
+	}
+	createdAt, err := dateutils.TimestampToDateTime(user.CreatedAt)
+	if err != nil {
+		return nil
+	}
+	updatedAt, err := dateutils.TimestampToDateTime(user.UpdatedAt)
+	if err != nil {
+		return nil
+	}
+
+	return &UserResponse{
+		ID:          user.ID,
+		Name:        user.Name,
+		Email:       user.Email,
+		PhoneNumber: user.PhoneNumber,
+		Nik:         user.Nik,
+		City:        user.City,
+		Gender:      user.Gender,
+		DateOfBirth: DateOfBirth,
+		CreatedAt:   createdAt,
+		UpdatedAt:   updatedAt,
+	}
+}
+
+type UpdateProfileRequest struct {
+	Name        string `json:"name" binding:"required"`
+	Email       string `json:"email" binding:"required,email"`
+	PhoneNumber string `json:"phone_number"`
+	Nik         string `json:"nik" binding:"required"`
+	DateOfBirth string `json:"date_of_birth" binding:"required"`
+	Gender      string `json:"gender" binding:"required"`
+	City        string `json:"city" binding:"required"`
+}
+
+type UserResponse struct {
+	ID          int64   `json:"ID"`
+	Name        string  `json:"Name"`
+	Email       string  `json:"Email"`
+	PhoneNumber *string `json:"PhoneNumber"`
+	Nik         string  `json:"Nik"`
+	City        string  `json:"City"`
+	Gender      string  `json:"Gender"`
+	DateOfBirth string  `json:"DateOfBirth"`
+	CreatedAt   string  `json:"createdAt"`
+	UpdatedAt   string  `json:"updatedAt"`
+}

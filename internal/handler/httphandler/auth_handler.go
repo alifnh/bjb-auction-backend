@@ -62,20 +62,34 @@ func (h *AuthHandler) Login(ctx *gin.Context) {
 }
 
 func (h *AuthHandler) GetProfileByID(ctx *gin.Context) {
-	userIDInt, ok := ctxutils.GetUserId(ctx)
-	if !ok {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})
-		return
-	}
+	userIDInt, _ := ctxutils.GetUserId(ctx)
 
 	user, err := h.authUsecase.GetProfileByID(ctx.Request.Context(), userIDInt)
 	if err != nil {
 		ctx.Error(err)
 		return
 	}
+	response := dto.EntityToUserResponse(user)
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"message": "success get profile",
-		"data":    user,
-	})
+	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, "success get profile", response)
+}
+
+func (h *AuthHandler) UpdateProfile(ctx *gin.Context) {
+	userID, _ := ctxutils.GetUserId(ctx)
+
+	var req dto.UpdateProfileRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Panggil usecase untuk update profile dan mendapatkan data terbaru
+	user, err := h.authUsecase.UpdateProfile(ctx.Request.Context(), userID, &req)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, "success update profile", user)
+
 }

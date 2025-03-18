@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"log"
 
+	"github.com/alifnh/bjb-auction-backend/internal/dto"
 	"github.com/alifnh/bjb-auction-backend/internal/model"
 	"github.com/alifnh/bjb-auction-backend/internal/pkg/database"
 )
@@ -14,7 +15,7 @@ type AuthRepository interface {
 	GetUserByEmail(ctx context.Context, email string) (*model.User, error)
 	GetById(ctx context.Context, id int64) (*model.User, error)
 	UserExists(ctx context.Context, email string) (bool, error)
-	GetUserByID(ctx context.Context, userID int64) (*model.User, error)
+	UpdateProfile(ctx context.Context, userID int64, req *dto.UpdateProfileRequest) error
 }
 
 type authRepository struct {
@@ -51,9 +52,9 @@ func (r *authRepository) GetUserByEmail(ctx context.Context, email string) (*mod
 }
 
 func (r *authRepository) GetById(ctx context.Context, id int64) (*model.User, error) {
-	q := `select id, email, password, name, nik, gender, date_of_birth, role, city, created_at, updated_at from users where id = $1 and deleted_at isnull `
+	q := `select id, email, password, name, nik, gender, phone_number, date_of_birth, role, city, created_at, updated_at from users where id = $1 and deleted_at isnull `
 	var user model.User
-	err := r.db.Start(ctx).QueryRowContext(ctx, q, id).Scan(&user.ID, &user.Email, &user.Password, &user.Name, &user.Nik, &user.Gender, &user.DateOfBirth, &user.Role, &user.City, &user.CreatedAt, &user.UpdatedAt)
+	err := r.db.Start(ctx).QueryRowContext(ctx, q, id).Scan(&user.ID, &user.Email, &user.Password, &user.Name, &user.Nik, &user.Gender, &user.PhoneNumber, &user.DateOfBirth, &user.Role, &user.City, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		log.Printf("failed to get user by id: %v", err)
 		if err == sql.ErrNoRows {
@@ -75,23 +76,21 @@ func (r *authRepository) UserExists(ctx context.Context, email string) (bool, er
 	return exists, nil
 }
 
-func (r *authRepository) GetUserByID(ctx context.Context, userID int64) (*model.User, error) {
+func (r *authRepository) UpdateProfile(ctx context.Context, userID int64, req *dto.UpdateProfileRequest) error {
 	query := `
-		SELECT id, name, email, phone_number, created_at, updated_at, deleted_at
-		FROM users WHERE id = $1
+		UPDATE users
+		SET name = $1, email = $2, phone_number = $3, nik = $4, 
+		    date_of_birth = $5, gender = $6, city = $7, updated_at = NOW()
+		WHERE id = $8
 	`
 
-	var user model.User
-	err := r.db.Start(ctx).QueryRowContext(ctx, query, userID).Scan(
-		&user.ID, &user.Name, &user.Email, &user.PhoneNumber,
-		&user.CreatedAt, &user.UpdatedAt, &user.DeletedAt,
+	_, err := r.db.Start(ctx).ExecContext(ctx, query,
+		req.Name, req.Email, req.PhoneNumber, req.Nik,
+		req.DateOfBirth, req.Gender, req.City, userID,
 	)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil // Jika user tidak ditemukan, return nil tanpa error
-		}
-		return nil, err
+		return err
 	}
 
-	return &user, nil
+	return nil
 }
