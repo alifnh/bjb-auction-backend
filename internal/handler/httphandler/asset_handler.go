@@ -101,3 +101,19 @@ func (h *AssetHandler) GetAllAssets(ctx *gin.Context) {
 	}
 	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, constant.ResponseMsgSuccessRegister, assets)
 }
+
+func (h *AssetHandler) GetAllFavoriteAssets(ctx *gin.Context) {
+	var req dto.GetAssetListRequest
+
+	if err := ctx.ShouldBind(&req); err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	assets, err := h.assetUsecase.GetAllFavoriteAssets(ctx, req.Category, req.Limit)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+	ginutils.ResponseSuccessJSON(ctx, http.StatusOK, constant.ResponseMsgSuccessRegister, assets)
+}

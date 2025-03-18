@@ -1,0 +1,40 @@
+services:
+  app:
+    container_name: bjb-auction
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8000:8000'
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://postgres:Vemivek@db:5432/bjb-auction
+      DB_USER: postgres
+      DB_PASSWORD: Vemivek
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: bjb_auction
+    labels:
+      logging: promtail
+      web.httpserver: library-api
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    container_name: postgres-db
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: bjb-auction
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Vemivek
+    volumes:
+      - ./sql/ddl.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5429:5432"
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 5
