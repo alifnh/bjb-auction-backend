@@ -10,6 +10,7 @@ import (
 
 type AssetUsecase interface {
 	CreateAsset(ctx context.Context, req *dto.CreateAssetRequest, img string) (*model.Asset, error)
+	GetAssetByID(ctx context.Context, id int64) (*model.Asset, error)
 }
 
 type assetUsecase struct {
@@ -29,4 +30,13 @@ func (u *assetUsecase) CreateAsset(ctx context.Context, req *dto.CreateAssetRequ
 		return nil, err
 	}
 	return u.assetRepository.CreateAsset(ctx, asset)
+}
+
+func (u *assetUsecase) GetAssetByID(ctx context.Context, id int64) (*model.Asset, error) {
+	asset, err := u.assetRepository.GetAssetById(ctx, id)
+	if err != nil {
+		log.Printf("failed to get asset by ID: %v", err)
+		return nil, apperror.ErrFailedToGetAssetInfo
+	}
+	return asset, nil
 }

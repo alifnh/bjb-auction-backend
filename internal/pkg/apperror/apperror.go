@@ -35,4 +35,5 @@ var (
 	ErrFailedToGetUserInfo           = &AppError{http.StatusInternalServerError, constant.FailedToGetUserInfo}
 	ErrFailedToDecodeUserInfo        = &AppError{http.StatusInternalServerError, constant.FailedToDecodeUserInfo}
 	ErrRoleNotPermitted              = &AppError{http.StatusBadRequest, constant.RoleNotPermitted}
+	ErrFailedToGetAssetInfo          = &AppError{http.StatusInternalServerError, constant.FailedToGetAssetInfo}
 )
