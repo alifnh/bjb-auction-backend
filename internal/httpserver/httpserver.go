@@ -108,6 +108,7 @@ func initServer(cfg *config.Config) *http.Server {
 		ar.DELETE("/assets/:id/remove-favorite", userAssetHandler.RemoveFavorite)
 		ar.GET("/assets", assetHandler.GetAllAssets)
 		ar.GET("/users", authHandler.GetProfileByID)
+		ar.GET("/assets/favorites", assetHandler.GetAllFavoriteAssets)
 	}
 
 	srv := &http.Server{

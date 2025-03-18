@@ -15,6 +15,7 @@ type AssetUsecase interface {
 	CreateAsset(ctx context.Context, req *dto.CreateAssetRequest, img string) (*model.Asset, error)
 	GetAssetByID(ctx context.Context, id int64) (*model.Asset, bool, error)
 	GetAllAssets(ctx context.Context, category string, limit int) ([]*dto.SumAssetResponse, error)
+	GetAllFavoriteAssets(ctx context.Context, category string, limit int) ([]*dto.SumAssetResponse, error)
 	DeleteAssetByID(ctx context.Context, assetID int64) error
 }
 
@@ -69,10 +70,20 @@ func (u *assetUsecase) GetAllAssets(ctx context.Context, category string, limit 
 	return result, nil
 }
 
+func (u *assetUsecase) GetAllFavoriteAssets(ctx context.Context, category string, limit int) ([]*dto.SumAssetResponse, error) {
+	userId, _ := ctxutils.GetUserId(ctx)
+	assets, err := u.assetRepository.GetAllAssetsFavorite(ctx, category, limit, userId)
+	if err != nil {
+		log.Printf("failed to get all favorite assets: %v", err)
+		return nil, err
+	}
+	result := dto.ConvertAssetsToSumAssetResponses(assets)
+	return result, nil
+}
+
 func (u *assetUsecase) DeleteAssetByID(ctx context.Context, assetID int64) error {
 	err := u.assetRepository.DeleteAssetById(ctx, assetID)
 	if err != nil {
-		log.Printf("failed to delete asset: %w", err)
 		return err
 	}
 	return nil
