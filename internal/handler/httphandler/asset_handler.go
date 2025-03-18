@@ -39,10 +39,6 @@ func (h *AssetHandler) GetAssetByID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, asset)
-func NewAssetHandler(u usecase.AssetUsecase) *AssetHandler {
-	return &AssetHandler{
-		assetUsecase: u,
-	}
 }
 
 func (h *AssetHandler) CreateAsset(ctx *gin.Context) {

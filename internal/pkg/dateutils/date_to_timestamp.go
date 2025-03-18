@@ -14,7 +14,3 @@ func DateToTimestamp(date string) (time.Time, error) {
 	}
 	return result, nil
 }
-
-func TimestampToDate(timestamp time.Time) string {
-	return timestamp.Format("2006-01-02")
-}

@@ -145,6 +145,22 @@ type AssetResponse struct {
 }
 
 func AssetEntityToResponse(asset *model.Asset) *AssetResponse {
+	startDate, err := dateutils.TimestampToDate(asset.StartDate)
+	if err != nil {
+		return nil
+	}
+	endDate, err := dateutils.TimestampToDate(asset.EndDate)
+	if err != nil {
+		return nil
+	}
+	createdAt, err := dateutils.TimestampToDateTime(asset.CreatedAt)
+	if err != nil {
+		return nil
+	}
+	updatedAt, err := dateutils.TimestampToDateTime(asset.UpdatedAt)
+	if err != nil {
+		return nil
+	}
 	return &AssetResponse{
 		ID:          asset.ID,
 		Category:    asset.Category,
@@ -155,9 +171,9 @@ func AssetEntityToResponse(asset *model.Asset) *AssetResponse {
 		City:        asset.City,
 		Address:     asset.Address,
 		MapsURL:     *asset.MapsUrl,
-		StartDate:   dateutils.TimestampToDate(asset.StartDate),
-		EndDate:     dateutils.TimestampToDate(asset.EndDate),
-		CreatedAt:   dateutils.TimestampToDate(asset.CreatedAt),
-		UpdatedAt:   dateutils.TimestampToDate(asset.UpdatedAt),
+		StartDate:   startDate,
+		EndDate:     endDate,
+		CreatedAt:   createdAt,
+		UpdatedAt:   updatedAt,
 	}
 }

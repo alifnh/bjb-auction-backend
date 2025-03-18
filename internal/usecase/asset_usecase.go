@@ -2,9 +2,11 @@ package usecase
 
 import (
 	"context"
+	"log"
 
 	"github.com/alifnh/bjb-auction-backend/internal/dto"
 	"github.com/alifnh/bjb-auction-backend/internal/model"
+	"github.com/alifnh/bjb-auction-backend/internal/pkg/apperror"
 	"github.com/alifnh/bjb-auction-backend/internal/repository"
 )
 

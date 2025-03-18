@@ -42,6 +42,8 @@ func (r *assetRepository) GetAssetById(ctx context.Context, id int64) (*model.As
 	}
 
 	return &asset, nil
+}
+
 func (r *assetRepository) CreateAsset(ctx context.Context, asset *model.Asset) (*model.Asset, error) {
 	query := `INSERT INTO assets (category, img_url, name, price, description, city, address, maps_url, start_date, end_date, created_at, updated_at) 
 	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW()) RETURNING id`
@@ -55,7 +57,7 @@ func (r *assetRepository) CreateAsset(ctx context.Context, asset *model.Asset) (
 func (r *assetRepository) GetAllAssets(ctx context.Context, category string, limit int) ([]*model.Asset, error) {
 	query := `SELECT * FROM assets WHERE category = $1 ORDER BY created_at DESC LIMIT $2`
 	var assets []*model.Asset
-	rows, err := r.db.Start(ctx).QueryContext(ctx, query, category, limit)
+	_, err := r.db.Start(ctx).QueryContext(ctx, query, category, limit)
 	if err != nil {
 		return nil, err
 	}
