@@ -54,6 +54,18 @@ type CreateAssetRequest struct {
 	EndDate     string  `form:"end_date" binding:"required"`
 }
 
+type UpdateAssetRequest struct {
+	Category    string  `json:"category" binding:"required"`
+	Name        string  `json:"name" binding:"required"`
+	Price       float64 `json:"price" binding:"required"`
+	Description string  `json:"description"`
+	City        string  `json:"city" binding:"required"`
+	Address     string  `json:"address" binding:"required"`
+	MapsURL     string  `json:"maps_url"`
+	StartDate   string  `json:"start_date" binding:"required"`
+	EndDate     string  `json:"end_date" binding:"required"`
+}
+
 func CreateAssetReqToEntity(r *CreateAssetRequest, img string) (*model.Asset, error) {
 	startDate, err := dateutils.DateToTimestamp(r.StartDate)
 	if err != nil {
@@ -227,4 +239,27 @@ func ConvertAssetsToSumAssetResponses(assets []*model.Asset) []*SumAssetResponse
 	}
 
 	return response
+}
+
+func UpdateAssetReqToEntity(r *UpdateAssetRequest) (*model.Asset, error) {
+	startDate, err := dateutils.DateToTimestamp(r.StartDate)
+	if err != nil {
+		return nil, err
+	}
+	endDate, err := dateutils.DateToTimestamp(r.EndDate)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.Asset{
+		Category:    r.Category,
+		Name:        r.Name,
+		Price:       r.Price,
+		Description: &r.Description,
+		City:        r.City,
+		Address:     r.Address,
+		MapsUrl:     &r.MapsURL,
+		StartDate:   startDate,
+		EndDate:     endDate,
+	}, nil
 }

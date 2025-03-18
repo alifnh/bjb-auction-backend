@@ -36,4 +36,5 @@ var (
 	ErrFailedToDecodeUserInfo        = &AppError{http.StatusInternalServerError, constant.FailedToDecodeUserInfo}
 	ErrRoleNotPermitted              = &AppError{http.StatusBadRequest, constant.RoleNotPermitted}
 	ErrFailedToGetAssetInfo          = &AppError{http.StatusInternalServerError, constant.FailedToGetAssetInfo}
+	ErrFailedToCreateAsset           = &AppError{http.StatusInternalServerError, constant.FailedToCreateAsset}
 )

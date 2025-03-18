@@ -16,6 +16,7 @@ type AssetRepository interface {
 	GetAllAssets(ctx context.Context, category string, limit int) ([]*model.Asset, error)
 	GetAllAssetsFavorite(ctx context.Context, category string, limit int, userId int64) ([]*model.Asset, error)
 	DeleteAssetById(ctx context.Context, id int64) error
+	UpdateAsset(ctx context.Context, asset *model.Asset) error
 }
 
 type assetRepository struct {
@@ -132,5 +133,14 @@ func (r *assetRepository) DeleteAssetById(ctx context.Context, id int64) error {
 		return sql.ErrNoRows
 	}
 
+	return nil
+}
+
+func (r *assetRepository) UpdateAsset(ctx context.Context, asset *model.Asset) error {
+	query := `UPDATE assets SET category = $1, img_url = $2, name = $3, price = $4, description = $5, city = $6, address = $7, maps_url = $8, start_date = $9, end_date = $10, updated_at = NOW() WHERE id = $11`
+	_, err := r.db.Start(ctx).ExecContext(ctx, query, asset.Category, asset.ImgUrl, asset.Name, asset.Price, asset.Description, asset.City, asset.Address, asset.MapsUrl, asset.StartDate, asset.EndDate, asset.ID)
+	if err != nil {
+		return err
+	}
 	return nil
 }
