@@ -14,6 +14,7 @@ type AssetRepository interface {
 	GetAssetById(ctx context.Context, id int64) (*model.Asset, error)
 	CreateAsset(ctx context.Context, asset *model.Asset) (*model.Asset, error)
 	GetAllAssets(ctx context.Context, category string, limit int) ([]*model.Asset, error)
+	DeleteAssetById(ctx context.Context, id int64) error
 }
 
 type assetRepository struct {
@@ -85,4 +86,20 @@ func (r *assetRepository) GetAllAssets(ctx context.Context, category string, lim
 		assets = append(assets, &asset)
 	}
 	return assets, nil
+}
+
+func (r *assetRepository) DeleteAssetById(ctx context.Context, id int64) error {
+	query := `DELETE FROM assets WHERE id = $1`
+
+	res, err := r.db.Start(ctx).ExecContext(ctx, query, id)
+	if err != nil {
+		return fmt.Errorf("failed to delete asset: %w", err)
+	}
+
+	rowsAffected, _ := res.RowsAffected()
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
 }
