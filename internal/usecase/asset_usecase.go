@@ -15,6 +15,7 @@ type AssetUsecase interface {
 	CreateAsset(ctx context.Context, req *dto.CreateAssetRequest, img string) (*model.Asset, error)
 	GetAssetByID(ctx context.Context, id int64) (*model.Asset, bool, error)
 	GetAllAssets(ctx context.Context, category string, limit int) ([]*dto.SumAssetResponse, error)
+	DeleteAssetByID(ctx context.Context, assetID int64) error
 }
 
 type assetUsecase struct {
@@ -66,4 +67,13 @@ func (u *assetUsecase) GetAllAssets(ctx context.Context, category string, limit 
 	}
 	result := dto.ConvertAssetsToSumAssetResponses(assets)
 	return result, nil
+}
+
+func (u *assetUsecase) DeleteAssetByID(ctx context.Context, assetID int64) error {
+	err := u.assetRepository.DeleteAssetById(ctx, assetID)
+	if err != nil {
+		log.Printf("failed to delete asset: %w", err)
+		return err
+	}
+	return nil
 }

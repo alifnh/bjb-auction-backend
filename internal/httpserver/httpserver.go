@@ -102,10 +102,10 @@ func initServer(cfg *config.Config) *http.Server {
 	ar.Use(authMiddleware.RequireToken())
 	{
 		ar.GET("/assets/:id", assetHandler.GetAssetByID)
+		ar.DELETE("/assets/:id", authzMiddleware.RequireRole(constant.RoleAdmin), assetHandler.DeleteAssetByID)
 		ar.POST("/assets", authzMiddleware.RequireRole(constant.RoleAdmin), assetHandler.CreateAsset)
 		ar.POST("/assets/:id/add-favorite", userAssetHandler.AddFavorite)
 		ar.DELETE("/assets/:id/remove-favorite", userAssetHandler.RemoveFavorite)
-
 		ar.GET("/assets", assetHandler.GetAllAssets)
 	}
 
